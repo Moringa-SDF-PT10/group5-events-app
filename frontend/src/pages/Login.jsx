@@ -11,25 +11,31 @@ export default function AuthPage() {
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
-      const endpoint = isLogin ? "/api/login" : "/api/signup";
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const endpoint = isLogin ? "/auth/login" : "/auth/signup";
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
 
-      const data = await response.json();
-      console.log("Server response:", data);
+      const data = await res.json();
 
-      if (!response.ok) throw new Error(data.message || "Something went wrong");
+      if (!res.ok) throw new Error(data.message || "Something went wrong");
 
-      // Update AuthContext
-      login(data.user, values.rememberMe);
 
-      // Save token if "Remember Me" checked
-      if (values.rememberMe && data.access_token) {
+      // Store user and token in localStorage (or sessionStorage if not rememberMe)
+      if (values.rememberMe) {
         localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+      } else {
+        sessionStorage.setItem("access_token", data.access_token);
+        sessionStorage.setItem("user", JSON.stringify(data.user));
       }
+
+      // Update context state if  login function only sets user in context
+      login(data.user);
+
+
 
       alert(isLogin ? "Login successful!" : "Signup successful!");
       resetForm();
@@ -58,7 +64,6 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-600 p-4">
       <div className="flex w-11/12 max-w-6xl bg-white rounded-2xl shadow-lg overflow-hidden">
-        {/* Image */}
         <div
           className={`w-1/2 hidden md:flex items-center justify-center transition-all duration-700 ${
             isLogin ? "order-2" : "order-1"
@@ -71,7 +76,6 @@ export default function AuthPage() {
           />
         </div>
 
-        {/* Form */}
         <div
           className={`w-full md:w-1/2 p-12 flex flex-col justify-center transition-all duration-700 ${
             isLogin ? "order-1" : "order-2"

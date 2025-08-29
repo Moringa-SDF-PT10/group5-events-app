@@ -10,9 +10,6 @@ import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
-    {/* <LoginForm /> */}
-    {/* <AppRoutes /> */}
-    {/* <CreateEventForm /> */}
+      <App />
   </StrictMode>,
 )
