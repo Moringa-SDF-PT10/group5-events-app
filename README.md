@@ -1,1 +1,0 @@
-# group5-events-app
