@@ -36,7 +36,7 @@ The frontend is a **React app** (built separately) that consumes this API.
 ### 1️⃣ Clone the repo
 ```bash
 git clone https://github.com/Moringa-SDF-PT10/group5-events-app.git
-cd events-app-backend
+cd events-app/backend
 ```
 ## 2️⃣ Create a Virtual Environment
 
