@@ -5,8 +5,9 @@
 ![SQLAlchemy](https://img.shields.io/badge/sqlalchemy-2.0-red?logo=python)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-Backend service for the **Events App**, built with **Flask**, **SQLAlchemy**, and **Flask-Migrate**.
-It provides a RESTful API for managing **Users**, **Events**, and **Tickets**.
+Backend service for the **Events App**, built with **Flask**, **SQLAlchemy**, and **Flask-Migrate**.  
+It provides a RESTful API for managing **Users**, **Events**, and **Tickets**.  
+
 
 The frontend is a **React app** (built separately) that consumes this API.
 
@@ -25,8 +26,9 @@ The frontend is a **React app** (built separately) that consumes this API.
 
 ## 📦 Tech Stack
 
-- **Backend:** Flask, SQLAlchemy, Flask-Migrate
-- **Database:** SQLite (development), can extend to PostgreSQL/MySQL
+- **Backend:** Flask, SQLAlchemy, Flask-Migrate  
+- **Database:** SQLite (development), can extend to PostgreSQL/MySQL  
+
 - **Frontend:** React (Seperate project folders same repo)
 
 ---
@@ -52,19 +54,24 @@ pipenv install
 # Activate the virtual environment
 pipenv shell
 ```
-## 3️⃣ Install Dependencies
 
-Once inside the virtual environment, install all required packages using the `requirements.txt` file:
+## 3️⃣ Install Dependencies  
+
+Once inside the virtual environment, install all required packages using the `requirements.txt` file:  
+
 
 ```bash
 pip install -r requirements.txt
 ```
-## 4️⃣ Set Up the Database
+
+## 4️⃣ Set Up the Database  
+
 Since the `instance/` folder (with the SQLite database) and the `migrations/` directory are already included in this repository, you **do not need to run migrations** unless you are setting up the database from scratch.
 
 -  If setting up from scratch:
 
-Run the following commands to initialize and migrate your database:
+Run the following commands to initialize and migrate your database:  
+
 
 ```bash
 flask db init
@@ -72,16 +79,20 @@ flask db migrate -m "Initial migration"
 flask db upgrade
 ```
 
-## 5️⃣ (Optional) Seed with Sample Data
 
-To populate the database with sample users, events, and tickets, run:
+## 5️⃣ (Optional) Seed with Sample Data  
+
+To populate the database with sample users, events, and tickets, run:  
+
 
 ```bash
 python seed.py
 ```
-## 6️⃣ 🟢 Default Port (5000)
 
-Start the Flask development server with:
+## 6️⃣ 🟢 Default Port (5000)  
+
+Start the Flask development server with:  
+
 
 ```bash
 flask run
@@ -93,23 +104,29 @@ Below are the available endpoints grouped by resource:
 
 ### 🔐 Auth
 - `POST /auth/signup` → Register as a new user and receive an authentication token
-- `POST /auth/login` → Log using credentials and  token
+
+- `POST /auth/login` → Log using credentials and  token  
+
 
 ---
 
 ### 🎶 Events
-- `GET /events` → Fetch all events
-- `POST /events` → Create a new event
-- `GET /events/<id>` → Fetch details of a specific event
-- `PATCH /events/<id>` → Update an event
-- `DELETE /events/<id>` → Delete an event
+
+- `GET /events` → Fetch all events  
+- `POST /events` → Create a new event  
+- `GET /events/<id>` → Fetch details of a specific event  
+- `PATCH /events/<id>` → Update an event  
+- `DELETE /events/<id>` → Delete an event  
+
 
 ---
 
 ### 🎫 Tickets
-- `POST /tickets` → Create a new ticket
-- `PATCH /tickets/<id>/confirm` → Confirm a ticket (mark as paid/confirmed)
-- `PATCH /tickets/<id>/cancel` → Cancel a ticket
+
+- `POST /tickets` → Create a new ticket  
+- `PATCH /tickets/<id>/confirm` → Confirm a ticket (mark as paid/confirmed)  
+- `PATCH /tickets/<id>/cancel` → Cancel a ticket  
+
 ---
 ## 📖 Example Request
 
@@ -157,8 +174,10 @@ For questions, support, or contributions regarding this project, please feel fre
 | **Farouk Abdi** | 📧 [farouk.abdi@student.moringaschool.com](mailto:farouk.abdi@student.moringaschool.com) | Full Stack Developer |
 | **Elvis Mbuthia** | 📧 [elvis.mbuthia@student.moringaschool.com](mailto:elvis.mbuthia@student.moringaschool.com) | Full Stack Developer |
 
-## 📜 License
 
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+## 📜 License  
 
-This project is licensed under the **MIT License** – see the [LICENSE](./LICENSE) file for details.
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)  
+
+This project is licensed under the **MIT License** – see the [LICENSE](./LICENSE) file for details.  
+
