@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useAuth } from "../context/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
       const endpoint = isLogin ? "/api/login" : "/api/signup";
-      const response = await fetch(`http://localhost:5000${endpoint}`, { //backend connection
+      const response = await fetch(`http://localhost:5000${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
@@ -19,14 +23,17 @@ export default function AuthPage() {
 
       if (!response.ok) throw new Error(data.message || "Something went wrong");
 
-      // Tokens for login
+      // Update AuthContext
+      login(data.user, values.rememberMe);
+
+      // Save token if "Remember Me" checked
       if (values.rememberMe && data.access_token) {
         localStorage.setItem("access_token", data.access_token);
-        localStorage.setItem("user", JSON.stringify(data.user));
       }
 
       alert(isLogin ? "Login successful!" : "Signup successful!");
       resetForm();
+      navigate("/dashboard");
     } catch (err) {
       alert(err.message);
     } finally {
@@ -49,8 +56,8 @@ export default function AuthPage() {
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r">
-      <div className="flex w-11/12 max-w-6xl bg-gray-100 rounded-2xl shadow-lg overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-600 p-4">
+      <div className="flex w-11/12 max-w-6xl bg-white rounded-2xl shadow-lg overflow-hidden">
         {/* Image */}
         <div
           className={`w-1/2 hidden md:flex items-center justify-center transition-all duration-700 ${
@@ -143,7 +150,6 @@ export default function AuthPage() {
                   </>
                 )}
 
-                {/* Remember Me Checkbox */}
                 {isLogin && (
                   <div className="flex items-center space-x-2">
                     <Field type="checkbox" name="rememberMe" />
