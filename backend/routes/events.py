@@ -20,7 +20,7 @@ def get_event(event_id):
         return jsonify({'error': 'Event not found'}), 404
     return jsonify({'event': event.to_dict(include_creator=True)}), 200
 
-@events_bp.route('/', methods=['POST'])
+@events_bp.route('', methods=['POST'])
 @jwt_required()
 def create_event():
     current_user = get_current_user()

@@ -1,6 +1,6 @@
 import { Formik } from "formik";
 import axios from "axios";
-import "../EventForm.css";
+import "./EventForm.css";
 
 export default function EventForm() {
   const initialValues = {
@@ -16,25 +16,42 @@ export default function EventForm() {
     if (!values.title) errors.title = "Required";
     if (!values.date) errors.date = "Required";
     if (!values.location) errors.location = "Required";
-    if (values.price === "" || values.price < 0) errors.price = "Required and must be >= 0";
+    if (values.price === "" || values.price < 0)
+      errors.price = "Required and must be >= 0";
     return errors;
   };
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    const token = localStorage.getItem("access_token"); // ✅ Get the token
+
+    if (!token) {
+      alert("You must be logged in to create an event");
+      setSubmitting(false);
+      return;
+    }
+
     try {
-      await axios.post("http://localhost:5000/events", values); //backend connection
-      alert(" Event created successfully!");
+      await axios.post("/events", values, {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+          "Content-Type": "application/json",
+        },
+      });
+
+      alert("Event created successfully!");
       resetForm();
     } catch (err) {
-      console.error(err);
-      alert("Failed to create event");
+      console.error(err.response?.data || err.message);
+      alert(
+        "Failed to create event: " + (err.response?.data?.error || err.message)
+      );
     }
+
     setSubmitting(false);
   };
 
   return (
     <div className="event-form-container">
-      {/* Image */}
       <div className="event-form-image">
         <img
           src="https://img.freepik.com/premium-vector/events-concept-illustration_114360-28883.jpg"
@@ -43,12 +60,23 @@ export default function EventForm() {
         />
       </div>
 
-      {/* Form */}
       <div className="event-form-side">
         <div className="event-form-inner">
           <h2 className="event-form-title">Create Event</h2>
-          <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
-            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+          <Formik
+            initialValues={initialValues}
+            validate={validate}
+            onSubmit={handleSubmit}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+            }) => (
               <form onSubmit={handleSubmit} className="space-y-5">
                 <input
                   type="text"
@@ -59,7 +87,9 @@ export default function EventForm() {
                   value={values.title}
                   className="event-form-input"
                 />
-                {errors.title && touched.title && <div className="event-form-error">{errors.title}</div>}
+                {errors.title && touched.title && (
+                  <div className="event-form-error">{errors.title}</div>
+                )}
 
                 <textarea
                   name="description"
@@ -78,7 +108,9 @@ export default function EventForm() {
                   value={values.date}
                   className="event-form-input"
                 />
-                {errors.date && touched.date && <div className="event-form-error">{errors.date}</div>}
+                {errors.date && touched.date && (
+                  <div className="event-form-error">{errors.date}</div>
+                )}
 
                 <input
                   type="text"
@@ -89,7 +121,9 @@ export default function EventForm() {
                   value={values.location}
                   className="event-form-input"
                 />
-                {errors.location && touched.location && <div className="event-form-error">{errors.location}</div>}
+                {errors.location && touched.location && (
+                  <div className="event-form-error">{errors.location}</div>
+                )}
 
                 <input
                   type="number"
@@ -101,7 +135,9 @@ export default function EventForm() {
                   value={values.price}
                   className="event-form-input"
                 />
-                {errors.price && touched.price && <div className="event-form-error">{errors.price}</div>}
+                {errors.price && touched.price && (
+                  <div className="event-form-error">{errors.price}</div>
+                )}
 
                 <button
                   type="submit"

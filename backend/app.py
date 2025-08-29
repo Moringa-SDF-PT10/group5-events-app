@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 import os
 
 from models import db
-from config import config  
+from config import config
 
 from routes.auth import auth_bp
 from routes.events import events_bp
@@ -20,10 +20,15 @@ def create_app(config_name=None):
     app.config.from_object(config[config_name])
 
     # Initializations
-    db.init_app(app)    
-    migrate = Migrate(app, db)  
-    CORS(app)               
-    jwt = JWTManager(app)    
+    db.init_app(app)
+    migrate = Migrate(app, db)
+    CORS(
+    app,
+    resources={r"/*": {"origins": ["http://127.0.0.1:5173", "http://localhost:5173"]}},
+    supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization"]
+    )
+    jwt = JWTManager(app)
 
     # Register Blueprints
     app.register_blueprint(auth_bp, url_prefix="/auth")
@@ -76,7 +81,7 @@ def create_app(config_name=None):
     @app.errorhandler(500)
     def internal_error(error):
         """Handle internal server errors gracefully"""
-        db.session.rollback()  
+        db.session.rollback()
         return jsonify({'error': 'Internal server error'}), 500
 
     return app
