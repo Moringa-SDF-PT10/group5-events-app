@@ -5,13 +5,14 @@ import { useAuth } from "../context/useAuth";
 import { useNavigate } from "react-router-dom";
 
 export default function AuthPage() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [isLogin, setIsLogin] = useState(true);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
-      const endpoint = isLogin ? "/auth/login" : "/auth/signup";
+      const endpoint = isLogin ? `${API_URL}/auth/login` : `${API_URL}/auth/signup`;
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

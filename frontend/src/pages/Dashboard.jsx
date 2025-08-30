@@ -4,6 +4,7 @@ import { useAuth } from "../context/useAuth";
 import axios from "axios";
 
 const Dashboard = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user, setUser, token, loading } = useAuth();
   const [newUsername, setNewUsername] = useState("");
   const [message, setMessage] = useState("");
@@ -43,7 +44,7 @@ const Dashboard = () => {
     setIsSubmitting(true);
     try {
       const res = await axios.patch(
-        "/auth/update-profile",
+        `${API_URL}/auth/update-profile`,
         { username: trimmedUsername },
         {
           headers: {

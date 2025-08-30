@@ -4,6 +4,7 @@ import axios from "axios";
 import "./Events.css";
 
 function Events() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -18,7 +19,7 @@ function Events() {
     const fetchEvents = async () => {
       try {
         const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-        const res = await axios.get("/events", {
+        const res = await axios.get(`${API_URL}/events`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -41,7 +42,7 @@ function Events() {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
 
     try {
-      await axios.delete(`/events/${eventId}`, {
+      await axios.delete(`${API_URL}/events/${eventId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setEvents((prev) => prev.filter((e) => e.id !== eventId));

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 
 export default function EventDetails() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { id } = useParams();
   const { token } = useAuth();
   const [event, setEvent] = useState(null);
@@ -14,7 +15,7 @@ export default function EventDetails() {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await fetch(`/events/${id}`);
+        const res = await fetch(`${API_URL}/events/${id}`);
         if (!res.ok) throw new Error("Event not found");
         const data = await res.json();
         console.log("🎟 Event fetched:", data);
@@ -39,13 +40,13 @@ export default function EventDetails() {
     try {
       setBooking(true);
       setMessage("");
-      const res = await fetch(`/tickets/`, {
+      const res = await fetch(`${API_URL}/tickets/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ event_id: id }), 
+        body: JSON.stringify({ event_id: id }),
       });
       if (!res.ok) {
         const errData = await res.json();

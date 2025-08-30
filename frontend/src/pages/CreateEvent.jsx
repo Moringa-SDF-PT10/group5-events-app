@@ -4,6 +4,7 @@ import { useAuth } from "../context/useAuth";
 import "./EventForm.css";
 
 export default function EventForm() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { token: ctxToken } = useAuth();
 
   const initialValues = {
@@ -44,7 +45,7 @@ export default function EventForm() {
     };
 
     try {
-      const res = await axios.post("/events", payload, {
+      const res = await axios.post(`${API_URL}/events`, payload, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",

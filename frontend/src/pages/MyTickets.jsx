@@ -3,6 +3,7 @@ import { useAuth } from "../context/useAuth";
 import "./MyTickets.css";
 
 function MyTickets() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user, token } = useAuth(); // ✅ use both from context
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +14,7 @@ function MyTickets() {
 
     const fetchTickets = async () => {
       try {
-        const res = await fetch("/tickets/my", {
+        const res = await fetch(`${API_URL}/tickets/my`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`, // ✅ send Bearer token
