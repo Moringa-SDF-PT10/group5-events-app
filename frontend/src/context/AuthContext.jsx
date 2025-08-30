@@ -1,4 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
+
 import React, { createContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext();
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, setUser, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

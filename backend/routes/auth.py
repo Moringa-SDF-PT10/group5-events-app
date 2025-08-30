@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token,jwt_required, get_jwt_identity
 from models import db, User
 
 auth_bp = Blueprint('auth', __name__)
@@ -32,3 +32,28 @@ def login():
     return jsonify({'message': 'Login successful', 'access_token': access_token, 'user': user.to_dict()}), 200
 
 
+
+
+@auth_bp.route('/update-profile', methods=['PATCH'])
+@jwt_required()
+def update_profile():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    data = request.get_json() or {}
+    new_username = data.get('username', '').strip()
+
+    # Validate
+    if not new_username:
+        return jsonify({'error': 'Username cannot be empty'}), 422
+
+    if User.query.filter(User.username == new_username, User.id != user_id).first():
+        return jsonify({'error': 'Username already taken'}), 422
+
+    # Update username
+    user.username = new_username
+    db.session.commit()
+
+    return jsonify({'message': 'Profile updated', 'user': user.to_dict()}), 200
