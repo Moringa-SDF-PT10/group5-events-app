@@ -1,10 +1,12 @@
-# 🎟 Event Hub – Frontend
+# 🎟 Event Hub
 
 A web application to create, view, and manage events. Users can browse all events, create their own, and delete events they have created. The app also supports booking tickets for events.
 
 # Frontend
 ---
+**The app is deployed using render**
 
+Here is the link [EventHub](https://eventhub-hxlf.onrender.com)
 ## 🚀 Features
 
 - 🔑 **Authentication**
@@ -55,7 +57,7 @@ A web application to create, view, and manage events. Users can browse all event
 Clone the repo and install dependencies:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Moringa-SDF-PT10/group5-events-app.git
 cd frontend
 npm install
 ```
@@ -70,37 +72,7 @@ By default, the app will run on `http://localhost:5173`.
 
 ---
 
-## 🌍 API Proxy Setup
 
-This project uses **Vite proxy** to connect to the backend hosted on Render.
-
-In `vite.config.js`:
-
-```js
-server: {
-  proxy: {
-    "/tickets": {
-      target: "https://group5-events-app.onrender.com",
-      changeOrigin: true,
-      secure: false,
-    },
-    "/auth": {
-      target: "https://group5-events-app.onrender.com",
-      changeOrigin: true,
-      secure: false,
-    },
-    "/events": {
-      target: "https://group5-events-app.onrender.com",
-      changeOrigin: true,
-      secure: false,
-    },
-  },
-},
-```
-
-This ensures API calls like `/tickets/my` or `/auth/login` are automatically forwarded.
-
----
 
 ## 📂 Project Structure
 
@@ -122,7 +94,8 @@ frontend/
 
 ## 👨‍💻 Available Pages
 
-- `/` – Home (list of events)
+- `/` – Home
+- `/events` - All events
 - `/events/:id` – Event details + booking
 - `/my-tickets` – View and cancel booked tickets
 - `/login` – Login page
