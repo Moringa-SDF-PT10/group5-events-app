@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   // Load from localStorage when app starts
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    const storedToken = localStorage.getItem("token"); // ✅ now consistent with MyTickets
+    const storedToken = localStorage.getItem("token"); 
 
     if (storedUser) setUser(JSON.parse(storedUser));
     if (storedToken) setToken(storedToken);

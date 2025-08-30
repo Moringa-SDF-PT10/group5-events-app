@@ -20,7 +20,7 @@ export default function EventDetails() {
         const data = await res.json();
         console.log("🎟 Event fetched:", data);
 
-        // Backend returns {event: {...}} or just {...}, so be safe:
+
         setEvent(data.event || data);
       } catch (err) {
         setMessage(err.message);
@@ -31,7 +31,7 @@ export default function EventDetails() {
     fetchEvent();
   }, [id]);
 
-  // ✅ Correct booking to match your backend route (/tickets)
+  
   const handleBookTicket = async () => {
     if (!token) {
       setMessage("⚠️ You must be logged in to book a ticket");

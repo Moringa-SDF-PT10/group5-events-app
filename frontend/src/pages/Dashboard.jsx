@@ -10,12 +10,11 @@ const Dashboard = () => {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // When user changes (or loads), populate the input
+ 
   useEffect(() => {
     setNewUsername(user?.username || "");
   }, [user]);
 
-  // Helper: prefer context token, fall back to storages
   const getAuthToken = () =>
     token ||
     localStorage.getItem("access_token") ||

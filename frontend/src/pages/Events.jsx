@@ -22,7 +22,7 @@ function Events() {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        setEvents(res.data.events || []); // adjust if backend returns array directly
+        setEvents(res.data.events || []); 
       } catch (err) {
         setError(err.response?.data?.error || err.message);
       } finally {
