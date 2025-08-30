@@ -1,30 +1,28 @@
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../context/useAuth";
 import EventCard from "../components/EventCard";
 import axios from "axios";
 import "./Events.css";
 
 function Events() {
-  const API_URL = import.meta.env.VITE_API_URL;
+ const API_URL = import.meta.env.VITE_API_URL;
+  const { user, token, loading: authLoading } = useAuth(); // ✅ get user and token from context
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Get user from storage (prefer localStorage first, fallback to sessionStorage)
-  const storedUser =
-    JSON.parse(localStorage.getItem("user")) ||
-    JSON.parse(sessionStorage.getItem("user"));
-  const userId = storedUser?.id;
+  const userId = user?.id; // ✅ use context user
 
   useEffect(() => {
     const fetchEvents = async () => {
+      if (!token) return; // wait until token is available
+
       try {
-        const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
         const res = await axios.get(`${API_URL}/events`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Adjust this depending on your backend response shape
-        setEvents(Array.isArray(res.data) ? res.data : res.data.events || []);
+        setEvents(res.data.events || []); // adjust if backend returns array directly
       } catch (err) {
         setError(err.response?.data?.error || err.message);
       } finally {
@@ -32,11 +30,10 @@ function Events() {
       }
     };
 
-    fetchEvents();
-  }, []);
+    if (!authLoading) fetchEvents(); // fetch after auth finishes loading
+  }, [token, authLoading]);
 
   const handleDelete = async (eventId) => {
-    const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
     if (!token) return alert("You must be logged in");
 
     if (!window.confirm("Are you sure you want to delete this event?")) return;
@@ -55,7 +52,7 @@ function Events() {
     }
   };
 
-  if (loading) return <p className="container">Loading events...</p>;
+  if (loading || authLoading) return <p className="container">Loading events...</p>;
   if (error) return <p className="container error">{error}</p>;
 
   return (

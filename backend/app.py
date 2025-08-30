@@ -24,7 +24,7 @@ def create_app(config_name=None):
     migrate = Migrate(app, db)
     CORS(
     app,
-    resources={r"/*": {"origins": ["http://127.0.0.1:5173", "http://localhost:5173","https://eventhub-hxlf.onrender.com"]}},
+    resources={r"/*": {"origins": ["http://127.0.0.1:5173","https://eventhub-hxlf.onrender.com"]}},
     supports_credentials=True,
     allow_headers=["Content-Type", "Authorization"]
     )
