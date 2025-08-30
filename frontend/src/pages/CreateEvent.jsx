@@ -5,7 +5,7 @@ import "./EventForm.css";
 
 export default function EventForm() {
   const API_URL = import.meta.env.VITE_API_URL;
-  const { token: ctxToken } = useAuth();
+  const { token } = useAuth();
 
   const initialValues = {
     title: "",
@@ -28,7 +28,7 @@ export default function EventForm() {
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     // ✅ Prefer context, then localStorage, then sessionStorage
     const authToken =
-      ctxToken ||
+      token ||
       localStorage.getItem("token") ||
       sessionStorage.getItem("token");
 
