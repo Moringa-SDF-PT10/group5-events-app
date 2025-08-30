@@ -29,8 +29,8 @@ export default function EventForm() {
     // ✅ Prefer context, then localStorage, then sessionStorage
     const authToken =
       ctxToken ||
-      localStorage.getItem("access_token") ||
-      sessionStorage.getItem("access_token");
+      localStorage.getItem("token") ||
+      sessionStorage.getItem("token");
 
     if (!authToken) {
       alert("You must be logged in to create an event");
