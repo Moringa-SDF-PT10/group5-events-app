@@ -1,8 +1,11 @@
 import { Formik } from "formik";
 import axios from "axios";
+import { useAuth } from "../context/useAuth";
 import "./EventForm.css";
 
 export default function EventForm() {
+  const { token: ctxToken } = useAuth();
+
   const initialValues = {
     title: "",
     description: "",
@@ -16,38 +19,47 @@ export default function EventForm() {
     if (!values.title) errors.title = "Required";
     if (!values.date) errors.date = "Required";
     if (!values.location) errors.location = "Required";
-    if (values.price === "" || values.price < 0)
+    if (values.price === "" || Number(values.price) < 0)
       errors.price = "Required and must be >= 0";
     return errors;
   };
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    const token = localStorage.getItem("access_token"); // ✅ Get the token
+    // ✅ Prefer context, then localStorage, then sessionStorage
+    const authToken =
+      ctxToken ||
+      localStorage.getItem("access_token") ||
+      sessionStorage.getItem("access_token");
 
-    if (!token) {
+    if (!authToken) {
       alert("You must be logged in to create an event");
       setSubmitting(false);
       return;
     }
 
+    // ✅ Ensure numeric price
+    const payload = {
+      ...values,
+      price: Number(values.price),
+    };
+
     try {
-      await axios.post("/events", values, {
+      const res = await axios.post("/events", payload, {
         headers: {
-          Authorization: `Bearer ${token}`, 
+          Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
         },
       });
 
+
       alert("Event created successfully!");
       resetForm();
     } catch (err) {
-      console.error(err.response?.data || err.message);
-      alert(
-        "Failed to create event: " + (err.response?.data?.error || err.message)
-      );
+      console.error("Create event error:", err.response?.data || err.message);
+      alert("Failed to create event: " + (err.response?.data?.error || err.message));
+    } finally {
+      setSubmitting(false);
     }
-
-    setSubmitting(false);
   };
 
   return (
@@ -63,11 +75,7 @@ export default function EventForm() {
       <div className="event-form-side">
         <div className="event-form-inner">
           <h2 className="event-form-title">Create Event</h2>
-          <Formik
-            initialValues={initialValues}
-            validate={validate}
-            onSubmit={handleSubmit}
-          >
+          <Formik initialValues={initialValues} validate={validate} onSubmit={handleSubmit}>
             {({
               values,
               errors,
@@ -139,11 +147,7 @@ export default function EventForm() {
                   <div className="event-form-error">{errors.price}</div>
                 )}
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="event-form-button"
-                >
+                <button type="submit" disabled={isSubmitting} className="event-form-button">
                   {isSubmitting ? "Creating..." : "Create Event"}
                 </button>
               </form>

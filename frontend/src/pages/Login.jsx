@@ -19,23 +19,10 @@ export default function AuthPage() {
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.message || "Something went wrong");
 
-
-      // Store user and token in localStorage (or sessionStorage if not rememberMe)
-      if (values.rememberMe) {
-        localStorage.setItem("access_token", data.access_token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-      } else {
-        sessionStorage.setItem("access_token", data.access_token);
-        sessionStorage.setItem("user", JSON.stringify(data.user));
-      }
-
-      // Update context state if  login function only sets user in context
-      login(data.user);
-
-
+      // ✅ Pass both user + token into AuthContext
+      login(data.user, data.access_token, values.rememberMe);
 
       alert(isLogin ? "Login successful!" : "Signup successful!");
       resetForm();

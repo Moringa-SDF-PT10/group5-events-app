@@ -1,39 +1,80 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import axios from "axios";
 
 const Dashboard = () => {
-  const { user, setUser, token } = useAuth();
-  const [newUsername, setNewUsername] = useState(user.username || "");
+  const { user, setUser, token, loading } = useAuth();
+  const [newUsername, setNewUsername] = useState("");
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // When user changes (or loads), populate the input
+  useEffect(() => {
+    setNewUsername(user?.username || "");
+  }, [user]);
+
+  // Helper: prefer context token, fall back to storages
+  const getAuthToken = () =>
+    token ||
+    localStorage.getItem("access_token") ||
+    sessionStorage.getItem("access_token");
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setMessage("");
 
-    const trimmedUsername = newUsername.trim();
+    const trimmedUsername = (newUsername || "").trim();
     if (!trimmedUsername) {
       setMessage("Username cannot be empty");
       return;
     }
-    if (trimmedUsername === user.username) {
+    if (trimmedUsername === (user?.username || "")) {
       setMessage("Username is the same as before");
       return;
     }
 
+    const authToken = getAuthToken();
+    if (!authToken) {
+      setMessage("You are not authenticated. Please log in again.");
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
       const res = await axios.patch(
         "/auth/update-profile",
         { username: trimmedUsername },
-        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
 
-      setUser(res.data.user);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      const updatedUser = res.data.user;
+      // Update in-memory context
+      setUser(updatedUser);
+
+      // Persist where the token actually lives
+      if (localStorage.getItem("access_token")) {
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      } else if (sessionStorage.getItem("access_token")) {
+        sessionStorage.setItem("user", JSON.stringify(updatedUser));
+      } else {
+        // fallback — store in localStorage so next page reload sees it
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
+
       setMessage("Username updated successfully!");
     } catch (err) {
       console.error("Update profile error:", err.response?.data || err);
-      setMessage(err.response?.data?.error || "Failed to update username");
+      const serverMsg =
+        err.response?.data?.error || err.response?.data?.message;
+      setMessage(serverMsg || "Failed to update username");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -41,7 +82,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Welcome Message */}
       <h1 className="text-4xl font-bold text-purple-600 mb-6">
-        Welcome, {user.username || user.email}!
+        Welcome, {user?.username || user?.email || "Guest"}!
       </h1>
       <p className="mb-8 text-gray-700">
         Here's a quick overview of your EventHub account.
@@ -52,7 +93,10 @@ const Dashboard = () => {
         <h2 className="text-2xl font-semibold mb-4 text-purple-600">
           Update Profile
         </h2>
-        <form onSubmit={handleUpdate} className="flex flex-col sm:flex-row gap-4 items-center">
+        <form
+          onSubmit={handleUpdate}
+          className="flex flex-col sm:flex-row gap-4 items-center"
+        >
           <input
             type="text"
             value={newUsername}
@@ -60,21 +104,28 @@ const Dashboard = () => {
             className="p-2 border rounded w-full sm:w-auto"
             placeholder="New username"
             required
+            aria-label="new username"
           />
           <button
             type="submit"
-            disabled={newUsername.trim() === user.username}
+            disabled={
+              isSubmitting || newUsername.trim() === (user?.username || "")
+            }
             className={`px-4 py-2 rounded text-white transition ${
-              newUsername.trim() === user.username
+              newUsername.trim() === (user?.username || "")
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-purple-600 hover:bg-purple-700"
             }`}
           >
-            Update
+            {isSubmitting ? "Updating..." : "Update"}
           </button>
         </form>
         {message && (
-          <p className={`mt-2 ${message.includes("successfully") ? "text-green-600" : "text-red-600"}`}>
+          <p
+            className={`mt-2 ${
+              message.toLowerCase().includes("success") ? "text-green-600" : "text-red-600"
+            }`}
+          >
             {message}
           </p>
         )}

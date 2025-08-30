@@ -14,19 +14,23 @@ export default defineConfig({
   },
   server: {
   proxy: {
-    "/auth": {
-      target: "http://localhost:5000",
+    "/tickets": {
+      target: "https://group5-events-app.onrender.com",
       changeOrigin: true,
+      secure: false,
+    },
+    "/auth": {
+      target: "https://group5-events-app.onrender.com",
+      changeOrigin: true,
+      secure: false,
     },
     "/events": {
-      target: "http://localhost:5000",
+      target: "https://group5-events-app.onrender.com",
       changeOrigin: true,
-    },
-    "/tickets": {
-      target: "http://localhost:5000",
-      changeOrigin: true,
+      secure: false,
     },
   },
 },
+
 
 });

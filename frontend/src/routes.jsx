@@ -4,7 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
 import Home from "./pages/Home";
-import Login from "./pages/Login"; // AuthPage exported as default
+import AuthPage from "./pages/Login";
 import CreateEvent from "./pages/CreateEvent";
 import EventDetail from "./pages/EventDetail";
 import Events from "./pages/Events";
@@ -23,7 +23,7 @@ const AppRoutes = () => (
   <Routes>
     {/* Public routes */}
     <Route path="/" element={<Home />} />
-    <Route path="/login" element={<Login />} />
+    <Route path="/login" element={<AuthPage/>} />
 
     {/* Protected routes */}
     <Route

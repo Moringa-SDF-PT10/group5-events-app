@@ -1,12 +1,162 @@
-# 🎟️ Events App Backend (Flask + SQLAlchemy)
+# 🎟 Event Hub – Frontend
+
+A web application to create, view, and manage events. Users can browse all events, create their own, and delete events they have created. The app also supports booking tickets for events.
+
+# Frontend
+---
+
+## 🚀 Features
+
+- 🔑 **Authentication**
+  - User signup, login, and logout with JWT-based authentication
+  - Securely stores user session in context
+
+- 🎭 **Events**
+  - Browse a list of available events
+  - View detailed event information
+  - Book tickets for events (requires login)
+
+- 🎟 **Tickets**
+  - View all your booked tickets
+  - Cancel tickets with one click
+
+- 🎨 **UI**
+  - Clean and responsive interface
+  - Custom styling with CSS modules
+
+---
+
+## Screenshots
+
+![Dashboard](frontend/src/assets/eventhub-dashboard.png)
+*All events displayed in a responsive grid*
+
+![Event Detail](frontend/src/assets/events_details.png)
+*Book tickets or see event details*
+
+![Create Event](frontend/src/assets/createevent.png)
+*Form to create a new event*
+
+---
+
+## 🛠 Tech Stack
+
+- **React 18** + **Vite** ⚡
+- **React Router** – navigation
+- **Context API** – authentication state
+- **Fetch API** – data fetching
+- **CSS** – custom styling
+- **Backend API** – [Event Hub backend](https://group5-events-app.onrender.com)
+
+---
+
+## 📦 Installation & Setup
+
+Clone the repo and install dependencies:
+
+```bash
+git clone <your-repo-url>
+cd frontend
+npm install
+```
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+By default, the app will run on `http://localhost:5173`.
+
+---
+
+## 🌍 API Proxy Setup
+
+This project uses **Vite proxy** to connect to the backend hosted on Render.
+
+In `vite.config.js`:
+
+```js
+server: {
+  proxy: {
+    "/tickets": {
+      target: "https://group5-events-app.onrender.com",
+      changeOrigin: true,
+      secure: false,
+    },
+    "/auth": {
+      target: "https://group5-events-app.onrender.com",
+      changeOrigin: true,
+      secure: false,
+    },
+    "/events": {
+      target: "https://group5-events-app.onrender.com",
+      changeOrigin: true,
+      secure: false,
+    },
+  },
+},
+```
+
+This ensures API calls like `/tickets/my` or `/auth/login` are automatically forwarded.
+
+---
+
+## 📂 Project Structure
+
+```
+frontend/
+│── public/              # Static assets
+│── src/
+│   ├── components/      # Reusable UI components
+│   ├── pages/           # Route pages (Home, EventDetails, MyTickets, etc.)
+│   ├── context/         # Auth context + hooks
+│   ├── App.jsx          # Main app
+│   ├── main.jsx         # Entry point
+│── package.json
+│── vite.config.js
+│── README.md
+```
+
+---
+
+## 👨‍💻 Available Pages
+
+- `/` – Home (list of events)
+- `/events/:id` – Event details + booking
+- `/my-tickets` – View and cancel booked tickets
+- `/login` – Login page
+- `/signup` – Signup page
+
+---
+
+## ✅ Todo / Improvements
+
+- [ ] Add search & filter for events
+- [ ] Improve ticket UI with QR codes
+- [ ] Add user profile page
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feature-name`)
+3. Commit your changes
+4. Push and open a Pull Request
+
+---
+
+# Backend
+
 
 ![Python](https://img.shields.io/badge/python-3.10-blue?logo=python)
 ![Flask](https://img.shields.io/badge/flask-2.3-black?logo=flask)
 ![SQLAlchemy](https://img.shields.io/badge/sqlalchemy-2.0-red?logo=python)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-Backend service for the **Events App**, built with **Flask**, **SQLAlchemy**, and **Flask-Migrate**.  
-It provides a RESTful API for managing **Users**, **Events**, and **Tickets**.  
+Backend service for the **Events App**, built with **Flask**, **SQLAlchemy**, and **Flask-Migrate**.
+It provides a RESTful API for managing **Users**, **Events**, and **Tickets**.
 
 
 The frontend is a **React app** (built separately) that consumes this API.
@@ -26,8 +176,8 @@ The frontend is a **React app** (built separately) that consumes this API.
 
 ## 📦 Tech Stack
 
-- **Backend:** Flask, SQLAlchemy, Flask-Migrate  
-- **Database:** SQLite (development), can extend to PostgreSQL/MySQL  
+- **Backend:** Flask, SQLAlchemy, Flask-Migrate
+- **Database:** SQLite (development), can extend to PostgreSQL/MySQL
 
 - **Frontend:** React (Seperate project folders same repo)
 
@@ -55,22 +205,22 @@ pipenv install
 pipenv shell
 ```
 
-## 3️⃣ Install Dependencies  
+## 3️⃣ Install Dependencies
 
-Once inside the virtual environment, install all required packages using the `requirements.txt` file:  
+Once inside the virtual environment, install all required packages using the `requirements.txt` file:
 
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 4️⃣ Set Up the Database  
+## 4️⃣ Set Up the Database
 
 Since the `instance/` folder (with the SQLite database) and the `migrations/` directory are already included in this repository, you **do not need to run migrations** unless you are setting up the database from scratch.
 
 -  If setting up from scratch:
 
-Run the following commands to initialize and migrate your database:  
+Run the following commands to initialize and migrate your database:
 
 
 ```bash
@@ -80,18 +230,18 @@ flask db upgrade
 ```
 
 
-## 5️⃣ (Optional) Seed with Sample Data  
+## 5️⃣ (Optional) Seed with Sample Data
 
-To populate the database with sample users, events, and tickets, run:  
+To populate the database with sample users, events, and tickets, run:
 
 
 ```bash
 python seed.py
 ```
 
-## 6️⃣ 🟢 Default Port (5000)  
+## 6️⃣ 🟢 Default Port (5000)
 
-Start the Flask development server with:  
+Start the Flask development server with:
 
 
 ```bash
@@ -105,27 +255,27 @@ Below are the available endpoints grouped by resource:
 ### 🔐 Auth
 - `POST /auth/signup` → Register as a new user and receive an authentication token
 
-- `POST /auth/login` → Log using credentials and  token  
+- `POST /auth/login` → Log using credentials and  token
 
 
 ---
 
 ### 🎶 Events
 
-- `GET /events` → Fetch all events  
-- `POST /events` → Create a new event  
-- `GET /events/<id>` → Fetch details of a specific event  
-- `PATCH /events/<id>` → Update an event  
-- `DELETE /events/<id>` → Delete an event  
+- `GET /events` → Fetch all events
+- `POST /events` → Create a new event
+- `GET /events/<id>` → Fetch details of a specific event
+- `PATCH /events/<id>` → Update an event
+- `DELETE /events/<id>` → Delete an event
 
 
 ---
 
 ### 🎫 Tickets
 
-- `POST /tickets` → Create a new ticket  
-- `PATCH /tickets/<id>/confirm` → Confirm a ticket (mark as paid/confirmed)  
-- `PATCH /tickets/<id>/cancel` → Cancel a ticket  
+- `POST /tickets` → Create a new ticket
+- `PATCH /tickets/<id>/confirm` → Confirm a ticket (mark as paid/confirmed)
+- `PATCH /tickets/<id>/cancel` → Cancel a ticket
 
 ---
 ## 📖 Example Request
@@ -175,9 +325,8 @@ For questions, support, or contributions regarding this project, please feel fre
 | **Elvis Mbuthia** | 📧 [elvis.mbuthia@student.moringaschool.com](mailto:elvis.mbuthia@student.moringaschool.com) | Full Stack Developer |
 
 
-## 📜 License  
+## 📜 License
 
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)  
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
-This project is licensed under the **MIT License** – see the [LICENSE](./LICENSE) file for details.  
-
+This project is licensed under the **MIT License** – see the [LICENSE](./LICENSE) file for details.

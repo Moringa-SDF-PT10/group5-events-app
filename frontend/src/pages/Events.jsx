@@ -8,19 +8,22 @@ function Events() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Get user from storage (prefer localStorage first, fallback to sessionStorage)
   const storedUser =
-  JSON.parse(localStorage.getItem("user") || sessionStorage.getItem("user"));
+    JSON.parse(localStorage.getItem("user")) ||
+    JSON.parse(sessionStorage.getItem("user"));
   const userId = storedUser?.id;
-
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
         const res = await axios.get("/events", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setEvents(res.data.events);
+
+        // Adjust this depending on your backend response shape
+        setEvents(Array.isArray(res.data) ? res.data : res.data.events || []);
       } catch (err) {
         setError(err.response?.data?.error || err.message);
       } finally {
@@ -31,10 +34,8 @@ function Events() {
     fetchEvents();
   }, []);
 
-
-
   const handleDelete = async (eventId) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
     if (!token) return alert("You must be logged in");
 
     if (!window.confirm("Are you sure you want to delete this event?")) return;
@@ -65,13 +66,12 @@ function Events() {
         <div className="grid">
           {events.map((event) => (
             <EventCard
-                key={event.id}
-                event={event}
-                onDelete={handleDelete}
-                canDelete={event.creator_id === userId} // only show delete for events user created
+              key={event.id}
+              event={event}
+              onDelete={handleDelete}
+              canDelete={event.creator_id === userId} // only show delete for user's events
             />
-            ))}
-
+          ))}
         </div>
       )}
     </div>
